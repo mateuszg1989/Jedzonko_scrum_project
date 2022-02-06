@@ -16,9 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from jedzonko.views import IndexView
+from jedzonko.views import IndexView, LandingPageView, DashboardView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', IndexView.as_view()),
+    path('',LandingPageView.as_view(),name='landing-page'),
+    path('main/',DashboardView.as_view(), name='dashboard'),
+
 ]
