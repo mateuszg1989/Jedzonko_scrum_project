@@ -27,7 +27,10 @@ class DashboardView(View):
     def get(self, request):
         recipes_number = Recipe.objects.count()
         plan_number = Plan.objects.count()
-        return render(request, "dashboard.html", {'recipes_number': recipes_number, 'plan_number': plan_number})
+        last_added_plan = Plan.objects.all().order_by('created')[0]
+        return render(request, "dashboard.html", {
+            'recipes_number': recipes_number, 'plan_number': plan_number, 'last_added_plan': last_added_plan
+                                                  })
 
 
 
