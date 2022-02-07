@@ -6,6 +6,7 @@ from random import shuffle
 from jedzonko.forms import RecipeForm
 
 
+
 class IndexView(View):
 
     def get(self, request):
@@ -26,6 +27,7 @@ class DashboardView(View):
     def get(self, request):
         return render(request, "dashboard.html")
 
+      
 class AddRecipeView(View):
     def get(self,request):
         form = RecipeForm()
@@ -42,3 +44,6 @@ class AddRecipeView(View):
             return redirect('/recipe/list')
         else:
             return render(request,'app-add-recipe.html',{'form':form})
+
+class RecipeListView(View):
+    pass
