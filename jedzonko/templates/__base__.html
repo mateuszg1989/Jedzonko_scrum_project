@@ -31,20 +31,44 @@
         <div class="row dashboard-nowrap">
                 <ul class="nav flex-column long-bg">
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{% url 'landing-page' %}">
+                                <span>Zaplanuj Jedzonko</span>
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">
                                 <span>Pulpit</span>
                                 <i class="fas fa-angle-right"></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{% url 'recipes' %}">
                                 <span>Przepisy</span>
                                 <i class="fas fa-angle-right"></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{% url 'plans' %}">
                                 <span>Plany</span>
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add-recipe' %}">
+                                <span>Dodaj przepis</span>
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add-plan' %}">
+                                <span>Dodaj plan</span>
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add-recipe-to-plan' %}">
+                                <span>Dodaj przepis do planu</span>
                                 <i class="fas fa-angle-right"></i>
                             </a>
                         </li>

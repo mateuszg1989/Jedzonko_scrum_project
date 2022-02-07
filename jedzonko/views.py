@@ -45,5 +45,37 @@ class AddRecipeView(View):
         else:
             return render(request,'app-add-recipe.html',{'form':form})
 
+
 class RecipeListView(View):
-    pass
+    def get(self, request):
+        return render(request, 'app-recipes.html')
+
+
+class RecipeView(View):
+    def get(self, request):
+        return render(request, 'app-recipe-details.html')
+
+
+class RecipeModifyView(View):
+    def get(self, request):
+        return render(request, 'app-edit-recipe.html')
+
+
+class PlanListView(View):
+    def get(self, request):
+        return render(request, 'app-schedules.html')
+
+
+class PlanView(View):
+    def get(self, request):
+        return render(request, 'app-details-schedules.html')
+
+
+class AddPlanView(View):
+    def get(self, request):
+        return render(request, 'app-add-schedules.html')
+
+
+class AddRecipeToPlanView(View):
+    def get(self, request):
+        return render(request, 'app-schedules-meal-recipe.html')
