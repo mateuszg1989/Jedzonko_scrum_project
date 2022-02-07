@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views import View
 from random import shuffle
 
+
 class IndexView(View):
 
     def get(self, request):
@@ -25,3 +26,6 @@ class DashboardView(View):
 
         return render(request, "dashboard.html")
 
+
+class RecipeListView(View):
+    pass
