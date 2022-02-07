@@ -31,7 +31,7 @@ class DashboardView(View):
 
 
 
-      
+
 class AddRecipeView(View):
     def get(self,request):
         form = RecipeForm()
