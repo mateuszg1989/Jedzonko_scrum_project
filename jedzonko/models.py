@@ -1,12 +1,14 @@
 from django.db import models
 from django.db.models import Count
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 class Recipe(models.Model):
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=255)
     ingredients = models.TextField()
     description = models.TextField()
-    created = models.DateField(auto_now_add=True)
-    updated = models.DateField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, USE_TZ=True)
+    updated = models.DateTimeField(auto_now=True, USE_TZ=True)
     preparation_time = models.IntegerField(null=True)
     votes = models.IntegerField(default=0)
 
@@ -15,9 +17,9 @@ class Recipe(models.Model):
 
 
 class Plan(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=255)
     description = models.TextField()
-    created = models.DateField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True, USE_TZ=True)
     recipes = models.ManyToManyField(Recipe, through='RecipePlan')
 
     def __str__(self):
@@ -26,17 +28,17 @@ class Plan(models.Model):
 
 class DayName(models.Model):
     name = models.CharField(max_length=16)
-    order = models.IntegerField(unique=True)
+    order = models.IntegerField(unique=True, validators=[MaxValueValidator(7), MinValueValidator(1)])
 
     def __str__(self):
         return self.name
 
 
 class RecipePlan(models.Model):
-    meal_name = models.CharField(max_length=16)
+    meal_name = models.CharField(max_length=255)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
-    order = models.IntegerField(unique=True)
+    order = models.IntegerField()
     day_name = models.ForeignKey(DayName, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -44,9 +46,9 @@ class RecipePlan(models.Model):
 
 
 class Page(models.Model):
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=255)
     description = models.TextField()
-    slug = models.CharField(max_length=64)
+    slug = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title
