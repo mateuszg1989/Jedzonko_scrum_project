@@ -1,8 +1,8 @@
 from datetime import datetime
-
+from jedzonko.models import Recipe
 from django.shortcuts import render
 from django.views import View
-
+from random import shuffle
 
 class IndexView(View):
 
@@ -14,10 +14,14 @@ class IndexView(View):
 class LandingPageView(View):
 
     def get(self, request):
-        return render(request, "index.html")
+        recipe = list(Recipe.objects.all())
+        shuffle(recipe)
+        return render(request, "index.html", {'recipe': recipe})
 
 
 class DashboardView(View):
 
     def get(self, request):
+
         return render(request, "dashboard.html")
+
