@@ -7,8 +7,8 @@ class Recipe(models.Model):
     name = models.CharField(max_length=255)
     ingredients = models.TextField()
     description = models.TextField()
-    created = models.DateTimeField(auto_now_add=True, USE_TZ=True)
-    updated = models.DateTimeField(auto_now=True, USE_TZ=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     preparation_time = models.IntegerField(null=True)
     votes = models.IntegerField(default=0)
 
@@ -19,7 +19,7 @@ class Recipe(models.Model):
 class Plan(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
-    created = models.DateTimeField(auto_now_add=True, USE_TZ=True)
+    created = models.DateTimeField(auto_now_add=True)
     recipes = models.ManyToManyField(Recipe, through='RecipePlan')
 
     def __str__(self):
