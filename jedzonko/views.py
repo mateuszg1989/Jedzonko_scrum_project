@@ -1,5 +1,5 @@
 from datetime import datetime
-from jedzonko.models import Recipe
+from jedzonko.models import Recipe, Plan
 from django.shortcuts import render, redirect
 from django.views import View
 from random import shuffle
@@ -26,7 +26,8 @@ class DashboardView(View):
 
     def get(self, request):
         recipes_number = Recipe.objects.count()
-        return render(request, "dashboard.html", {'recipes_number': recipes_number})
+        plan_number = Plan.objects.count()
+        return render(request, "dashboard.html", {'recipes_number': recipes_number, 'plan_number': plan_number})
 
 
 
