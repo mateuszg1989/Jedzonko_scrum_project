@@ -25,7 +25,10 @@ class LandingPageView(View):
 class DashboardView(View):
 
     def get(self, request):
-        return render(request, "dashboard.html")
+        recipes_number = Recipe.objects.count()
+        return render(request, "dashboard.html", {'recipes_number': recipes_number})
+
+
 
       
 class AddRecipeView(View):
