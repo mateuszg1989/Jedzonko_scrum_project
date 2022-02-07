@@ -38,7 +38,7 @@ class RecipePlan(models.Model):
     meal_name = models.CharField(max_length=255)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
-    order = models.IntegerField(unique=True)
+    order = models.IntegerField()
     day_name = models.ForeignKey(DayName, on_delete=models.CASCADE)
 
     def __str__(self):

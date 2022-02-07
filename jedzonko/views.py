@@ -6,7 +6,6 @@ from random import shuffle
 from jedzonko.forms import RecipeForm
 
 
-
 class IndexView(View):
 
     def get(self, request):
@@ -30,24 +29,23 @@ class DashboardView(View):
         return render(request, "dashboard.html", {'recipes_number': recipes_number, 'plan_number': plan_number})
 
 
-
-
 class AddRecipeView(View):
-    def get(self,request):
+    def get(self, request):
         form = RecipeForm()
-        return render(request,'app-add-recipe.html',{'form':form})
+        return render(request, 'app-add-recipe.html', {'form': form})
 
-    def post(self,request):
+    def post(self, request):
         form = RecipeForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
             preparation_time = form.cleaned_data['preparation_time']
             ingredients = form.cleaned_data['ingredients']
-            Recipe.objects.create(name=name, description=description, preparation_time=preparation_time, ingredients=ingredients)
+            Recipe.objects.create(name=name, description=description, preparation_time=preparation_time,
+                                  ingredients=ingredients)
             return redirect('/recipe/list')
         else:
-            return render(request,'app-add-recipe.html',{'form':form})
+            return render(request, 'app-add-recipe.html', {'form': form})
 
 
 class RecipeListView(View):
@@ -83,3 +81,7 @@ class AddPlanView(View):
 class AddRecipeToPlanView(View):
     def get(self, request):
         return render(request, 'app-schedules-meal-recipe.html')
+
+
+# class ContactView(View):
+#    def get(self, request):
