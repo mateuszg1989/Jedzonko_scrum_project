@@ -1,8 +1,11 @@
 from datetime import datetime
 from jedzonko.models import Recipe
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from random import shuffle
+from jedzonko.forms import RecipeForm
+
+
 
 class IndexView(View):
 
@@ -23,6 +26,27 @@ class DashboardView(View):
 
     def get(self, request):
         recipes_number = Recipe.objects.count()
-
         return render(request, "dashboard.html", {'recipes_number': recipes_number})
 
+
+
+      
+class AddRecipeView(View):
+    def get(self,request):
+        form = RecipeForm()
+        return render(request,'app-add-recipe.html',{'form':form})
+
+    def post(self,request):
+        form = RecipeForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            description = form.cleaned_data['description']
+            preparation_time = form.cleaned_data['preparation_time']
+            ingredients = form.cleaned_data['ingredients']
+            Recipe.objects.create(name=name, description=description, preparation_time=preparation_time, ingredients=ingredients)
+            return redirect('/recipe/list')
+        else:
+            return render(request,'app-add-recipe.html',{'form':form})
+
+class RecipeListView(View):
+    pass
