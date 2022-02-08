@@ -1,9 +1,11 @@
 from datetime import datetime
-from jedzonko.models import Recipe, Plan
+from jedzonko.models import Recipe, Plan, Page
 from django.shortcuts import render, redirect
 from django.views import View
 from random import shuffle
 from jedzonko.forms import RecipeForm
+from django.http import HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class IndexView(View):
@@ -86,5 +88,19 @@ class AddRecipeToPlanView(View):
         return render(request, 'app-schedules-meal-recipe.html')
 
 
-# class ContactView(View):
-#    def get(self, request):
+class ContactView(View):
+    def get(self, request):
+        try:
+            contact = Page.objects.get(slug='contact')
+            return render(request, 'app-contact.html', {'contact': contact})
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect('/#contact')
+
+
+class AboutView(View):
+    def get(self, request):
+        try:
+            about = Page.objects.get(slug='about')
+            return render(request, 'app-about.html', {'about': about})
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect('/#about')
