@@ -1,5 +1,5 @@
 from datetime import datetime
-from jedzonko.models import Recipe, Plan, Page
+from jedzonko.models import Recipe, Plan, Page, RecipePlan
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
@@ -90,8 +90,14 @@ class PlanListView(ListView):
 
 
 class PlanView(View):
-    def get(self, request):
-        return render(request, 'app-details-schedules.html')
+    def get(self, request, id):
+        plan = Plan.objects.get(id=id)
+        reciple_plan = RecipePlan.objects.filter(plan_id=id).order_by('recipe__plan__created')
+        return render(request, 'app-details-schedules.html',
+                      {
+                          'recipe_plan': reciple_plan,
+                          'plan': plan,
+                      })
 
 
 class AddPlanView(View):
