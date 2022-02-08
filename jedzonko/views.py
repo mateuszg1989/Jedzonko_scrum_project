@@ -1,5 +1,5 @@
 from datetime import datetime
-from jedzonko.models import Recipe, Plan, Page
+from jedzonko.models import Recipe, Plan, Page, RecipePlan, DayName
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
@@ -31,11 +31,13 @@ class DashboardView(View):
     def get(self, request):
         recipes_number = Recipe.objects.count()
         plan_number = Plan.objects.count()
-
-        return render(request, "dashboard.html", {'recipes_number': recipes_number, 'plan_number': plan_number})
-        last_added_plan = Plan.objects.all().order_by('created')[0]
+        plans = Plan.objects.all().order_by('-created')
+        plan = plans[0]
+        recipeplan = RecipePlan.objects.filter(plan_id=plan.id).order_by('order')
+        daynames = DayName.objects.filter(id__in=recipeplan.values('day_name')).order_by('order')
         return render(request, "dashboard.html", {
-            'recipes_number': recipes_number, 'plan_number': plan_number, 'last_added_plan': last_added_plan
+            'recipes_number': recipes_number, 'plan_number': plan_number,
+            'plan': plan, 'daynames': daynames, 'recipes': recipeplan
                                                   })
 
 
@@ -97,8 +99,14 @@ class PlanListView(ListView):
 
 
 class PlanView(View):
-    def get(self, request):
-        return render(request, 'app-details-schedules.html')
+    def get(self, request, id):
+        plan = Plan.objects.get(id=id)
+        reciple_plan = RecipePlan.objects.filter(plan_id=id).order_by('recipe__plan__created')
+        return render(request, 'app-details-schedules.html',
+                      {
+                          'recipe_plan': reciple_plan,
+                          'plan': plan,
+                      })
 
 
 class AddPlanView(View):
