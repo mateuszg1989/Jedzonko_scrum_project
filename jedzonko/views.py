@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import ListView
 from random import shuffle
 from jedzonko.forms import RecipeForm, PlanForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -77,8 +77,15 @@ class RecipeView(View):
 
 
 class RecipeModifyView(View):
-    def get(self, request):
-        return render(request, 'app-edit-recipe.html')
+    def get(self, request, recipe_id):
+        try:
+            recipe = Recipe.objects.get(id=recipe_id)
+            return render(request, 'app-edit-recipe.html', {'recipe': recipe})
+        except ObjectDoesNotExist:
+            return HttpResponse('Błąd 404: przepis nie istnieje!')
+    def post(self, request):
+        try:
+            name =
 
 
 class PlanListView(ListView):
@@ -134,6 +141,4 @@ class AboutView(View):
             return render(request, 'app-about.html', {'about': about})
         except ObjectDoesNotExist:
             return HttpResponseRedirect('/#about')
-
-
 
