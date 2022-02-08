@@ -72,8 +72,14 @@ class RecipeListView(ListView):
 
 
 class RecipeView(View):
-    def get(self, request):
-        return render(request, 'app-recipe-details.html')
+    def get(self, request, id):
+        recipe = Recipe.objects.get(id=id)
+        # method_of_preparing = recipe.method_of_preparing.split('-')
+        ingredients = recipe.ingredients.split('-')
+        return render(request, 'app-recipe-details.html', {
+            'recipe': recipe, 'ingredients': ingredients,
+            # 'method_of_preparing': method_of_preparing
+        })
 
 
 class RecipeModifyView(View):
