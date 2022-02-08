@@ -1,11 +1,12 @@
 from datetime import datetime
-from jedzonko.models import Recipe, Plan
+from jedzonko.models import Recipe, Plan, Page
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
 from random import shuffle
 from jedzonko.forms import RecipeForm
-
+from django.http import HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -30,15 +31,20 @@ class DashboardView(View):
     def get(self, request):
         recipes_number = Recipe.objects.count()
         plan_number = Plan.objects.count()
+
         return render(request, "dashboard.html", {'recipes_number': recipes_number, 'plan_number': plan_number})
+        last_added_plan = Plan.objects.all().order_by('created')[0]
+        return render(request, "dashboard.html", {
+            'recipes_number': recipes_number, 'plan_number': plan_number, 'last_added_plan': last_added_plan
+                                                  })
 
 
 class AddRecipeView(View):
-    def get(self,request):
+    def get(self, request):
         form = RecipeForm()
         return render(request, 'app-add-recipe.html', {'form': form})
 
-    def post(self,request):
+    def post(self, request):
         form = RecipeForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data['name']
@@ -93,3 +99,21 @@ class AddPlanView(View):
 class AddRecipeToPlanView(View):
     def get(self, request):
         return render(request, 'app-schedules-meal-recipe.html')
+
+
+class ContactView(View):
+    def get(self, request):
+        try:
+            contact = Page.objects.get(slug='contact')
+            return render(request, 'app-contact.html', {'contact': contact})
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect('/#contact')
+
+
+class AboutView(View):
+    def get(self, request):
+        try:
+            about = Page.objects.get(slug='about')
+            return render(request, 'app-about.html', {'about': about})
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect('/#about')
