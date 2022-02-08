@@ -81,9 +81,12 @@ class RecipeModifyView(View):
         return render(request, 'app-edit-recipe.html')
 
 
-class PlanListView(View):
-    def get(self, request):
-        return render(request, 'app-schedules.html')
+class PlanListView(ListView):
+    model = Plan
+    template_name = 'app-schedules.html'
+    context_object_name = 'plan'
+    paginate_by = 50
+    queryset = Plan.objects.all().order_by('name')
 
 
 class PlanView(View):
