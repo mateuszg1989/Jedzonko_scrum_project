@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
 from random import shuffle
-from jedzonko.forms import RecipeForm
+from jedzonko.forms import RecipeForm, PlanForm
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -96,7 +96,21 @@ class PlanView(View):
 
 class AddPlanView(View):
     def get(self, request):
-        return render(request, 'app-add-schedules.html')
+        form = PlanForm()
+        return render(request, 'app-add-schedules.html', {'form': form})
+
+    def post(self, request):
+        form = PlanForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            description = form.cleaned_data['description']
+            Plan.objects.create(
+                name=name,
+                description=description)
+            return redirect('/plan/<id>/details')
+        else:
+            return render(request, 'app-add-schedules.html', {'form': form})
+
 
 
 class AddRecipeToPlanView(View):
@@ -120,3 +134,6 @@ class AboutView(View):
             return render(request, 'app-about.html', {'about': about})
         except ObjectDoesNotExist:
             return HttpResponseRedirect('/#about')
+
+
+
