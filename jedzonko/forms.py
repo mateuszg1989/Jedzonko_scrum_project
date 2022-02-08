@@ -1,5 +1,5 @@
 import django.forms as forms
-from jedzonko.models import Recipe
+from jedzonko.models import Recipe, Plan
 
 class RecipeForm(forms.ModelForm):
     class Meta:
@@ -10,4 +10,13 @@ class RecipeForm(forms.ModelForm):
             'description':('Opis przepisu'),
             'preparation_time':('Czas przygotowania'),
             'ingredients':('Składniki')
+        }
+
+class PlanForm(forms.ModelForm):
+    class Meta:
+        model = Plan
+        fields =['name', 'description']
+        labels = {
+            'name': ('Nazwa planu'),
+            'description': ("Opis")
         }
