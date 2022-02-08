@@ -2,8 +2,11 @@ from datetime import datetime
 from jedzonko.models import Recipe, Plan
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import ListView
 from random import shuffle
 from jedzonko.forms import RecipeForm
+
+
 
 
 
@@ -30,12 +33,10 @@ class DashboardView(View):
         return render(request, "dashboard.html", {'recipes_number': recipes_number, 'plan_number': plan_number})
 
 
-
-
 class AddRecipeView(View):
     def get(self,request):
         form = RecipeForm()
-        return render(request,'app-add-recipe.html',{'form':form})
+        return render(request, 'app-add-recipe.html', {'form': form})
 
     def post(self,request):
         form = RecipeForm(request.POST)
@@ -44,15 +45,24 @@ class AddRecipeView(View):
             description = form.cleaned_data['description']
             preparation_time = form.cleaned_data['preparation_time']
             ingredients = form.cleaned_data['ingredients']
-            Recipe.objects.create(name=name, description=description, preparation_time=preparation_time, ingredients=ingredients)
+
+            Recipe.objects.create(
+                name=name,
+                description=description,
+                preparation_time=preparation_time,
+                ingredients=ingredients)
+
             return redirect('/recipe/list')
         else:
-            return render(request,'app-add-recipe.html',{'form':form})
+            return render(request, 'app-add-recipe.html', {'form': form})
 
 
-class RecipeListView(View):
-    def get(self, request):
-        return render(request, 'app-recipes.html')
+class RecipeListView(ListView):
+    model = Recipe
+    template_name = 'app-recipes.html'
+    context_object_name = 'recipe'
+    paginate_by = 50
+    queryset = Recipe.objects.all().order_by('created').order_by('-votes')
 
 
 class RecipeView(View):
