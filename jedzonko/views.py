@@ -9,8 +9,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 
 
-
-
 class IndexView(View):
 
     def get(self, request):
@@ -85,9 +83,20 @@ class RecipeModifyView(View):
             return render(request, 'app-edit-recipe.html', {'recipe': recipe})
         except ObjectDoesNotExist:
             return HttpResponse('Błąd 404: przepis nie istnieje!')
+
     def post(self, request):
-        try:
-            name =
+#        try:
+        name = request.POST.get('name')
+        ingredients = request.POST.get('ingredients')
+        description = request.POST.get('description')
+        preparation_time = request.POST.get('preparation_time')
+        method_of_preparing = request.POST.get('method_of_preparing')
+        return HttpResponse(name, ingredients, description, preparation_time, method_of_preparing)
+
+#            Recipe.objects.create(name=name, ingredients=ingredients, description=description,
+#                                  preparation_time=preparation_time, method_of_preparing=method_of_preparing)
+#        except ObjectDoesNotExist:
+#            return HttpResponseRedirect(f'//recipe/modify/{recipe_id}')
 
 
 class PlanListView(ListView):
@@ -127,7 +136,6 @@ class AddPlanView(View):
             return render(request, 'app-add-schedules.html', {'form': form})
 
 
-
 class AddRecipeToPlanView(View):
     def get(self, request):
         return render(request, 'app-schedules-meal-recipe.html')
@@ -149,4 +157,3 @@ class AboutView(View):
             return render(request, 'app-about.html', {'about': about})
         except ObjectDoesNotExist:
             return HttpResponseRedirect('/#about')
-
