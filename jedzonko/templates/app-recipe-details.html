@@ -37,6 +37,14 @@
                 <td class="col-7">
                     {{ recipe.votes }}
                 </td>
+                 <td>
+                     <form method="post">
+                         {% csrf_token %}
+                         <input name="id" type="text" hidden value="{{ recipe.id }}"></input>
+                         <button type="submit" name="voteup" value="+1" class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4" style="background-color: green">Polub przepis</button>
+                         <button type="submit" name="votedown" value="-1" class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4" style="background-color: red">Nie lubię przepisu</button>
+                     </form>
+                 </td>
             </tr>
             </tbody>
         </table>
