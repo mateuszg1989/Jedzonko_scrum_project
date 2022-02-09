@@ -88,6 +88,19 @@ class RecipeView(View):
             'method_of_preparing': method_of_preparing
         })
 
+    def post(self, request, id):
+        if request.POST.get('voteup') == '+1':
+            recipe = Recipe.objects.get(id=request.POST.get('id'))
+            recipe.votes += 1
+            recipe.save()
+            return redirect(f'/recipe/{recipe.id}/')
+        elif request.POST.get('votedown') == '-1':
+            recipe = Recipe.objects.get(id=request.POST.get('id'))
+            recipe.votes -= 1
+            recipe.save()
+            return redirect(f'/recipe/{recipe.id}/')
+
+
 
 class RecipeModifyView(View):
     def get(self, request, recipe_id):
