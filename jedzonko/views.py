@@ -1,14 +1,12 @@
 from datetime import datetime
-from jedzonko.models import Recipe, Plan, Page, RecipePlan
+from jedzonko.models import Recipe, Plan, Page, RecipePlan, DayName
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
 from random import shuffle
-from jedzonko.forms import RecipeForm
-from django.http import HttpResponseRedirect
+from jedzonko.forms import RecipeForm, PlanForm, SchedulesMeatRecipeForm
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-
-
 
 
 class IndexView(View):
@@ -31,10 +29,14 @@ class DashboardView(View):
     def get(self, request):
         recipes_number = Recipe.objects.count()
         plan_number = Plan.objects.count()
-        last_added_plan = Plan.objects.all().order_by('created')[0]
-            
+        plans = Plan.objects.all().order_by('-created')
+        plan = plans[0]
+        recipeplan = RecipePlan.objects.filter(plan_id=plan.id).order_by('order')
+        daynames = DayName.objects.filter(id__in=recipeplan.values('day_name')).order_by('order')
+
         return render(request, "dashboard.html", {
-            'recipes_number': recipes_number, 'plan_number': plan_number, 'last_added_plan': last_added_plan
+            'recipes_number': recipes_number, 'plan_number': plan_number,
+            'plan': plan, 'daynames': daynames, 'recipes': recipeplan
                                                   })
 
 
@@ -71,13 +73,37 @@ class RecipeListView(ListView):
 
 
 class RecipeView(View):
-    def get(self, request):
-        return render(request, 'app-recipe-details.html')
+    def get(self, request, id):
+        recipe = Recipe.objects.get(id=id)
+        method_of_preparing = recipe.method_of_preparing.split('-')
+        ingredients = recipe.ingredients.split('-')
+        return render(request, 'app-recipe-details.html', {
+            'recipe': recipe, 'ingredients': ingredients,
+            'method_of_preparing': method_of_preparing
+        })
 
 
 class RecipeModifyView(View):
-    def get(self, request):
-        return render(request, 'app-edit-recipe.html')
+    def get(self, request, recipe_id):
+        try:
+            recipe = Recipe.objects.get(id=recipe_id)
+            return render(request, 'app-edit-recipe.html', {'recipe': recipe})
+        except ObjectDoesNotExist:
+            return HttpResponse('Błąd 404: przepis nie istnieje!')
+
+    def post(self, request):
+#        try:
+        name = request.POST.get('name')
+        ingredients = request.POST.get('ingredients')
+        description = request.POST.get('description')
+        preparation_time = request.POST.get('preparation_time')
+        method_of_preparing = request.POST.get('method_of_preparing')
+        return HttpResponse(name, ingredients, description, preparation_time, method_of_preparing)
+
+#            Recipe.objects.create(name=name, ingredients=ingredients, description=description,
+#                                  preparation_time=preparation_time, method_of_preparing=method_of_preparing)
+#        except ObjectDoesNotExist:
+#            return HttpResponseRedirect(f'//recipe/modify/{recipe_id}')
 
 
 class PlanListView(ListView):
@@ -91,22 +117,58 @@ class PlanListView(ListView):
 class PlanView(View):
     def get(self, request, id):
         plan = Plan.objects.get(id=id)
-        reciple_plan = RecipePlan.objects.filter(plan_id=id).order_by('recipe__plan__created')
+        recipe_plan = RecipePlan.objects.filter(plan_id=id).order_by('plan')
+        day_name = DayName.objects.filter(id__in=recipe_plan.values('day_name')).order_by('order')
         return render(request, 'app-details-schedules.html',
                       {
-                          'recipe_plan': reciple_plan,
+                          'recipe_plan': recipe_plan,
                           'plan': plan,
+                          'day_name': day_name,
                       })
 
 
 class AddPlanView(View):
     def get(self, request):
-        return render(request, 'app-add-schedules.html')
+        form = PlanForm()
+        return render(request, 'app-add-schedules.html', {'form': form})
+
+    def post(self, request):
+        form = PlanForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            description = form.cleaned_data['description']
+            Plan.objects.create(
+                name=name,
+                description=description)
+            return redirect('plan/list/')
+        else:
+            return render(request, 'app-add-schedules.html', {'form': form})
 
 
 class AddRecipeToPlanView(View):
     def get(self, request):
-        return render(request, 'app-schedules-meal-recipe.html')
+        form = SchedulesMeatRecipeForm()
+        return render(request, 'app-schedules-meal-recipe.html', {'form': form})
+
+    def post(self, request):
+        form = SchedulesMeatRecipeForm(request.POST)
+        if form.is_valid():
+            select_plan = form.cleaned_data['select_plan']
+            select_recipe = form.cleaned_data['select_recipe']
+            meal_name = form.cleaned_data['meal_name']
+            meal_order = form.cleaned_data['meal_order']
+            day = form.cleaned_data['day']
+
+            RecipePlan.objects.create(
+                plan=select_plan,
+                recipe=select_recipe,
+                order=meal_order,
+                meal_name=meal_name,
+                day_name=day
+            )
+            return redirect(f'/plan/{select_plan.id}')
+        else:
+            return render(request,'app-schedules-meal-recipe.html', {'form', form})
 
 
 class ContactView(View):

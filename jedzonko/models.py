@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Count
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
@@ -11,6 +10,7 @@ class Recipe(models.Model):
     updated = models.DateTimeField(auto_now=True)
     preparation_time = models.IntegerField(null=True)
     votes = models.IntegerField(default=0)
+    method_of_preparing = models.TextField(null=True)
 
     def __str__(self):
         return self.name
