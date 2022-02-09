@@ -77,11 +77,11 @@ class RecipeView(View):
         recipe = Recipe.objects.get(id=id)
         try:
             method_of_preparing = recipe.method_of_preparing.split('-')
-        except:
+        except Exception:
             method_of_preparing = recipe.method_of_preparing
         try:
             ingredients = recipe.ingredients.split('-')
-        except:
+        except Exception:
             ingredients = recipe.ingredients
         return render(request, 'app-recipe-details.html', {
             'recipe': recipe, 'ingredients': ingredients,
@@ -101,7 +101,6 @@ class RecipeView(View):
             return redirect(f'/recipe/{recipe.id}/')
 
 
-
 class RecipeModifyView(View):
     def get(self, request, recipe_id):
         try:
@@ -110,19 +109,19 @@ class RecipeModifyView(View):
         except ObjectDoesNotExist:
             return HttpResponse('Błąd 404: przepis nie istnieje!')
 
-    def post(self, request):
-#        try:
+    def post(self, request, recipe_id):
         name = request.POST.get('name')
         ingredients = request.POST.get('ingredients')
         description = request.POST.get('description')
         preparation_time = request.POST.get('preparation_time')
         method_of_preparing = request.POST.get('method_of_preparing')
-        return HttpResponse(name, ingredients, description, preparation_time, method_of_preparing)
-
-#            Recipe.objects.create(name=name, ingredients=ingredients, description=description,
-#                                  preparation_time=preparation_time, method_of_preparing=method_of_preparing)
-#        except ObjectDoesNotExist:
-#            return HttpResponseRedirect(f'//recipe/modify/{recipe_id}')
+        if name != "" and ingredients != "" and description != "" and preparation_time != "" \
+                and method_of_preparing != "":
+            Recipe.objects.create(name=name, ingredients=ingredients, description=description,
+                                  preparation_time=preparation_time, method_of_preparing=method_of_preparing)
+            return HttpResponseRedirect('/recipe/list')
+        else:
+            return render(request, 'app-edit-recipe.html', {'alert_flag': True})
 
 
 class PlanListView(ListView):
@@ -187,7 +186,7 @@ class AddRecipeToPlanView(View):
             )
             return redirect(f'/plan/{select_plan.id}')
         else:
-            return render(request,'app-schedules-meal-recipe.html', {'form', form})
+            return render(request, 'app-schedules-meal-recipe.html', {'form', form})
 
 
 class ContactView(View):
