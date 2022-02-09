@@ -32,20 +32,22 @@
                 </div>
             </div>
         </div>
- {% for details in recipe_plan %}
+ {% for day in day_name %}
         <table class="table">
             <thead>
             <tr class="d-flex">
-                <th class="col-2">{{ details.day_name }}</th>
+                <th class="col-2">{{ day }}</th>
                 <th class="col-7"></th>
                 <th class="col-1"></th>
                 <th class="col-2"></th>
             </tr>
             </thead>
             <tbody class="text-color-lighter">
+            {% for recipe in recipe_plan %}
+                {% if recipe.day_name == day %}
             <tr class="d-flex">
-                <td class="col-2">{{ details.meal_name }}</td>
-                <td class="col-7">{{ details.recipe }}</td>
+                <td class="col-2">{{ recipe.meal_name }}</td>
+                <td class="col-7">{{ recipe.recipe }}</td>
                 <td class="col-1 center">
                     <a href="#" class="btn btn-danger rounded-0 text-light m-1">Usuń</a>
                 </td>
@@ -54,6 +56,8 @@
                        class="btn btn-info rounded-0 text-light m-1">Szczegóły</a>
                 </td>
             </tr>
+                {% endif %}
+                {% endfor %}
             </tbody>
         </table>
      {% endfor %}

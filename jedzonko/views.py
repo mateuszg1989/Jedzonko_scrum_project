@@ -116,11 +116,13 @@ class PlanListView(ListView):
 class PlanView(View):
     def get(self, request, id):
         plan = Plan.objects.get(id=id)
-        reciple_plan = RecipePlan.objects.filter(plan_id=id).order_by('recipe__plan__created')
+        recipe_plan = RecipePlan.objects.filter(plan_id=id).order_by('plan')
+        day_name = DayName.objects.filter(id__in=recipe_plan.values('day_name')).order_by('order')
         return render(request, 'app-details-schedules.html',
                       {
-                          'recipe_plan': reciple_plan,
+                          'recipe_plan': recipe_plan,
                           'plan': plan,
+                          'day_name': day_name,
                       })
 
 
