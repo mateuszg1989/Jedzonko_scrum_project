@@ -137,7 +137,7 @@ class AddPlanView(View):
             Plan.objects.create(
                 name=name,
                 description=description)
-            return redirect('/plan/<id>/details')
+            return redirect('plan/list/')
         else:
             return render(request, 'app-add-schedules.html', {'form': form})
 
