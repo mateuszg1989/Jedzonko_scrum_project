@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
 from random import shuffle
-from jedzonko.forms import RecipeForm, PlanForm
+from jedzonko.forms import RecipeForm, PlanForm, SchedulesMeatRecipeForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -33,6 +33,7 @@ class DashboardView(View):
         plan = plans[0]
         recipeplan = RecipePlan.objects.filter(plan_id=plan.id).order_by('order')
         daynames = DayName.objects.filter(id__in=recipeplan.values('day_name')).order_by('order')
+
         return render(request, "dashboard.html", {
             'recipes_number': recipes_number, 'plan_number': plan_number,
             'plan': plan, 'daynames': daynames, 'recipes': recipeplan
@@ -146,7 +147,28 @@ class AddPlanView(View):
 
 class AddRecipeToPlanView(View):
     def get(self, request):
-        return render(request, 'app-schedules-meal-recipe.html')
+        form = SchedulesMeatRecipeForm()
+        return render(request, 'app-schedules-meal-recipe.html', {'form': form})
+
+    def post(self, request):
+        form = SchedulesMeatRecipeForm(request.POST)
+        if form.is_valid():
+            select_plan = form.cleaned_data['select_plan']
+            select_recipe = form.cleaned_data['select_recipe']
+            meal_name = form.cleaned_data['meal_name']
+            meal_order = form.cleaned_data['meal_order']
+            day = form.cleaned_data['day']
+
+            RecipePlan.objects.create(
+                plan=select_plan,
+                recipe=select_recipe,
+                order=meal_order,
+                meal_name=meal_name,
+                day_name=day
+            )
+            return redirect(f'/plan/{select_plan.id}')
+        else:
+            return render(request,'app-schedules-meal-recipe.html', {'form', form})
 
 
 class ContactView(View):
