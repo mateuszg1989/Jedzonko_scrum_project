@@ -144,6 +144,13 @@ class PlanView(View):
                           'day_name': day_name,
                       })
 
+    def post(self, request, id):
+        if request.POST.get('Del') == 'Delete':
+            recipeplan_id = request.POST.get('id')
+            recipeplan = RecipePlan.objects.get(id=recipeplan_id)
+            recipeplan.delete()
+        return redirect(f'/plan/{id}')
+
 
 class AddPlanView(View):
     def get(self, request):
