@@ -124,6 +124,13 @@ class RecipeModifyView(View):
             return render(request, 'app-edit-recipe.html', {'alert_flag': True})
 
 
+class DeleteRecipeView(View):
+    def get(self, request, id):
+        recipe = Recipe.objects.get(id=id)
+        recipe.delete()
+        return redirect('/recipe/list')
+
+
 class PlanListView(ListView):
     model = Plan
     template_name = 'app-schedules.html'
