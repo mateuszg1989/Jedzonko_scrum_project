@@ -52,12 +52,15 @@ class AddRecipeView(View):
             description = form.cleaned_data['description']
             preparation_time = form.cleaned_data['preparation_time']
             ingredients = form.cleaned_data['ingredients']
+            method_of_preparing = form.cleaned_data['method_of_preparing']
 
             Recipe.objects.create(
                 name=name,
                 description=description,
                 preparation_time=preparation_time,
-                ingredients=ingredients)
+                ingredients=ingredients,
+                method_of_preparing=method_of_preparing
+            )
 
             return redirect('/recipe/list')
         else:
@@ -175,6 +178,13 @@ class AddPlanView(View):
             return redirect('plan/list/')
         else:
             return render(request, 'app-add-schedules.html', {'form': form})
+
+
+class DeletePlanView(View):
+    def get(self, request, id):
+        plan = Plan.objects.get(id=id)
+        plan.delete()
+        return redirect('/plan/list')
 
 
 class AddRecipeToPlanView(View):
